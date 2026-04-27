@@ -308,40 +308,7 @@
         @yield('content')
     </main>
 
-    <!-- Footer -->
-    <footer id="main-footer" class="footer-bottom">
-        <div class="footer-container">
-            <div class="footer-col">
-                <h3>Simpelsi</h3>
-                <h5>Berawal dari foto, Berakhir pada Kelestarian. Langkah kecil memberikan dampak besar pada pelestarian lingkungan.</h5>
-                <h5 class="copyright">©2025 Simpelsi All rights reserved.</h5>
-            </div>
-            <div class="footer-col">
-                <h3>Simpelsi</h3>
-                <ul>
-                    <li><a href="#home">Beranda</a></li>
-                    <li><a href="#profil">Profil</a></li>
-                    <li><a href="#fitur">Fitur</a></li>
-                    <li><a href="#jenis">Jenis Sampah</a></li>
-                    <li><a href="#download">Download</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>Social Media</h3>
-                <div class="social-icons">
-                    <a href="https://www.instagram.com/dlhnganjuk/" aria-label="Instagram">
-                        <img src="{{ asset('assets/instagram.png') }}" alt="Instagram" width="24">
-                    </a>
-                    <a href="https://www.facebook.com/profile.php?id=100076050218713" aria-label="Facebook">
-                        <img src="{{ asset('assets/facebook.png') }}" alt="Facebook" width="24">
-                    </a>
-                    <a href="https://www.youtube.com/@dlhbisa" aria-label="YouTube">
-                        <img src="{{ asset('assets/—Pngtree—youtube logo png_3733302.png') }}" alt="YouTube" width="24">
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    
 
     <script>
         // Toggle Mobile Menu & Overlay
