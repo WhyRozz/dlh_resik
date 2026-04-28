@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\ArtikelController;
 use App\Http\Controllers\Admin\TpsController;
 use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\DataPenggunaController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 // ✅ BankSampah Controllers
 use App\Http\Controllers\BankSampah\PenarikanController;
@@ -74,7 +77,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/ajax/get-password-raw', [AccountController::class, 'getPasswordRaw'])->name('ajax.get-password-raw');
     }); // ← ✅ TUTUP GROUP 'akun' DI SINI, SEBELUM BANK SAMPAH
 
-    // ================= ✅ BANK SAMPAH ROUTES (SEKARANG DI LUAR 'akun') =================
+    // ================= ✅ DATA PENGGUNA (DARI REMOTE) =================
+    Route::prefix('data-pengguna')->name('data-pengguna.')->group(function () {
+        Route::get('/', [DataPenggunaController::class, 'index'])->name('index');
+        Route::get('/export', [DataPenggunaController::class, 'export'])->name('export');
+    });
+
+    // ================= ✅ BANK SAMPAH ROUTES (PAKAI VERSI LOKAL - LEBIH LENGKAP) =================
     Route::prefix('bank-sampah')->name('bank_sampah.')->group(function () {
         
         // Data Penarikan
@@ -102,4 +111,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
     // ================= END BANK SAMPAH =================
 
+    // Logout
+    //Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 }); // ← Tutup group 'admin'
+
+// ================= ✅ API ROUTES (DARI REMOTE - HANYA 1, HAPUS DUPLIKAT) =================
+Route::get('/api/users/{id}', function ($id) {
+    if (!Auth::guard('admin')->check()) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    $user = DB::table('masyarakat')
+        ->where('id_masyarakat', $id)
+        ->first();
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    return response()->json([
+        'id_masyarakat' => $user->id_masyarakat,
+        'nama' => $user->nama,
+        'email' => $user->email,
+        'jenis_kelamin' => $user->jenis_kelamin,
+        'no_telp' => $user->no_telp,
+        'pekerjaan' => $user->pekerjaan,
+        'alamat' => $user->alamat,
+        'saldo_bank_sampah' => $user->saldo_bank_sampah ?? 0,
+        'qr_code_path' => $user->qr_code_path,
+        'created_at' => $user->created_at,
+    ]);
+})->middleware('auth:admin');
