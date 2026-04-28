@@ -77,5 +77,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 
     // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    //Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
