@@ -7,6 +7,9 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\ArtikelController;
 use App\Http\Controllers\Admin\TpsController;
 use App\Http\Controllers\Admin\AccountController;
+use App\Http\Controllers\Admin\DataPenggunaController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,6 +79,64 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/ajax/get-password-raw', [AccountController::class, 'getPasswordRaw'])->name('ajax.get-password-raw');
     });
 
+    // Data Pengguna
+    Route::prefix('data-pengguna')->name('data-pengguna.')->group(function () {
+        Route::get('/', [DataPenggunaController::class, 'index'])->name('index');
+        Route::get('/export', [DataPenggunaController::class, 'export'])->name('export');
+    });
+
+    // Bank Sampah Routes
+    Route::prefix('bank-sampah')->name('bank-sampah.')->group(function () {
+        Route::get('/setor', function () {
+            return view('admin.bank-sampah.setor');
+        })->name('setor');
+
+        Route::get('/tarik', function () {
+            return view('admin.bank-sampah.tarik');
+        })->name('tarik');
+
+        Route::get('/jenis-harga', function () {
+            return view('admin.bank-sampah.jenis-harga');
+        })->name('jenis-harga');
+
+        Route::get('/penjemputan', function () {
+            return view('admin.bank-sampah.penjemputan');
+        })->name('penjemputan');
+    })->middleware('auth:admin');
+
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+Route::get('/api/users/{id}', function ($id) {
+    $user = \App\Models\Masyarakat::find($id);
+    return response()->json($user);
+})->middleware('auth:admin');
+
+// ✅ Route API untuk fetch detail user
+Route::get('/api/users/{id}', function ($id) {
+    if (!Auth::guard('admin')->check()) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    $user = DB::table('masyarakat')
+        ->where('id_masyarakat', $id)
+        ->first();
+
+    if (!$user) {
+        return response()->json(['error' => 'User not found'], 404);
+    }
+
+    return response()->json([
+        'id_masyarakat' => $user->id_masyarakat,
+        'nama' => $user->nama,
+        'email' => $user->email,
+        'jenis_kelamin' => $user->jenis_kelamin,
+        'no_telp' => $user->no_telp,
+        'pekerjaan' => $user->pekerjaan,
+        'alamat' => $user->alamat,
+        'saldo_bank_sampah' => $user->saldo_bank_sampah ?? 0,
+        'qr_code_path' => $user->qr_code_path,
+        'created_at' => $user->created_at,
+    ]);
 });
