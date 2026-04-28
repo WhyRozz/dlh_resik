@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard Admin - SIMPELSI') 
+@section('title', 'Dashboard Admin - SIMPELSI') //tes3
 @section('page-title', 'Beranda')
 @section('page-title-mobile', 'BERANDA')
 
