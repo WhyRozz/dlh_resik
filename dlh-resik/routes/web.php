@@ -1,21 +1,19 @@
-<?php
+<?php 
 
 use Illuminate\Support\Facades\Route;
+
+// ✅ Controllers umum
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\Admin\AuthController as AdminAuthController;
+
+// ✅ Admin Controllers (dengan alias)
+use App\Http\Controllers\Admin\AuthController as AdminAuthController;  // ← WAJIB ADA!
 use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\Admin\ArtikelController;
 use App\Http\Controllers\Admin\TpsController;
 use App\Http\Controllers\Admin\AccountController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
-// Landing Page (Public)
-Route::get('/', [LandingController::class, 'index'])->name('landing');
+// ✅ BankSampah Controllers
+use App\Http\Controllers\BankSampah\PenarikanController;
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -74,8 +72,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // AJAX: Get password (placeholder)
         Route::post('/ajax/get-password', [AccountController::class, 'getPasswordPlaceholder'])->name('ajax.get-password');
         Route::post('/ajax/get-password-raw', [AccountController::class, 'getPasswordRaw'])->name('ajax.get-password-raw');
-    });
+    }); // ← ✅ TUTUP GROUP 'akun' DI SINI, SEBELUM BANK SAMPAH
 
-    // Logout
-    //Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-});
+    // ================= ✅ BANK SAMPAH ROUTES (SEKARANG DI LUAR 'akun') =================
+    Route::prefix('bank-sampah')->name('bank_sampah.')->group(function () {
+        
+        // Data Penarikan
+        Route::prefix('penarikan')->name('penarikan.')->group(function () {
+            Route::get('/', [PenarikanController::class, 'index'])->name('index');
+            Route::get('/{id}/detail', [PenarikanController::class, 'show'])->name('show');
+            Route::put('/{id}/status', [PenarikanController::class, 'updateStatus'])->name('update-status');
+            Route::delete('/{id}', [PenarikanController::class, 'destroy'])->name('destroy');
+        });
+
+        // Data Setor (opsional)
+        Route::prefix('setor')->name('setor.')->group(function () {
+            Route::get('/', [PenarikanController::class, 'setor'])->name('index');
+        });
+
+        // Jenis & Harga Sampah
+        Route::prefix('jenis-harga')->name('jenis_harga.')->group(function () {
+            Route::get('/', [PenarikanController::class, 'jenisHarga'])->name('index');
+        });
+
+        // Penjemputan
+        Route::prefix('penjemputan')->name('penjemputan.')->group(function () {
+            Route::get('/', [PenarikanController::class, 'penjemputan'])->name('index');
+        });
+    });
+    // ================= END BANK SAMPAH =================
+
+}); // ← Tutup group 'admin'

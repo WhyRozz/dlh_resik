@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash; // ← Pastikan import ini ada di atas file
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -51,13 +51,12 @@ class AuthController extends Controller
                 ->withInput($request->only('email'));
         }
 
-
-// Verifikasi password
-if (!Hash::check($validated['password'], $admin->password)) {
-    return back()
-        ->withErrors(['email' => 'Email atau sandi salah. Silakan coba lagi.'])
-        ->withInput($request->only('email'));
-}
+        // Verifikasi password
+        if (!Hash::check($validated['password'], $admin->password)) {
+            return back()
+                ->withErrors(['email' => 'Email atau sandi salah. Silakan coba lagi.'])
+                ->withInput($request->only('email'));
+        }
 
         // Login berhasil
         Auth::guard('admin')->login($admin);
@@ -74,6 +73,7 @@ if (!Hash::check($validated['password'], $admin->password)) {
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('landing');
+        // ✅ PERBAIKAN: Ganti 'landing' dengan 'admin.login'
+        return redirect()->route('admin.login');
     }
 }
