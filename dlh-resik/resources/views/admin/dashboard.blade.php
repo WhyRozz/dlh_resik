@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard Admin - SIMPELSI')
+@section('title', 'Dashboard Admin - SIMPELSI') //tes3
 @section('page-title', 'Beranda')
 @section('page-title-mobile', 'BERANDA')
 
@@ -29,7 +29,7 @@
 @endphp
 
 @section('content')
-<div class="content-header">
+<div class="content-header"> 
     <h2>Statistik Laporan</h2>
 </div>
 

@@ -105,7 +105,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->middleware('auth:admin');
 
     // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    //Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 Route::get('/api/users/{id}', function ($id) {
