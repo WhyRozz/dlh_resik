@@ -2,7 +2,11 @@
 
 @section('title', 'Dashboard Admin - SIMPELSI') //tes3
 @section('page-title', 'Beranda')
+<<<<<<< HEAD
 @section('page-title-mobile', 'BERANDA')
+=======
+@section('page-title-mobile', 'BERANDA') // tes ajaa baru 10
+>>>>>>> ad3e449 (save perubahan)
 
 {{-- Fallback variables jika controller tidak mengirim --}}
 @php
