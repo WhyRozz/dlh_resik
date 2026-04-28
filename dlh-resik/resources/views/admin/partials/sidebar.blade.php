@@ -2,7 +2,6 @@
     {{-- Header Sidebar --}}
     <div class="sidebar-header">
         <img src="{{ asset('assets/logo-resik.png') }}" alt="RESIK Logo" class="logo">
-        <span class="brand">RESIK ADMIN</span>
         <button class="sidebar-close" aria-label="Tutup Menu" onclick="toggleSidebar()">&times;</button>
     </div>
 

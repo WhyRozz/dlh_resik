@@ -5,9 +5,9 @@
     --sidebar-width: 260px;
     --sidebar-bg: #ffffff;
     --sidebar-border: #e5e7eb;
-    --primary-color: #16a34a;
+    --primary-color: #000000;
     --primary-hover: #15803d;
-    --text-color: #374151;
+    --text-color: #000000;
     --text-muted: #6b7280;
     --transition-speed: 0.3s;
 }
@@ -27,7 +27,6 @@
 }
 
 .sidebar-header {
-    display: flex;
     align-items: center;
     gap: 12px;
     padding: 20px;
@@ -35,16 +34,10 @@
 }
 
 .sidebar-header .logo {
-    width: 36px;
-    height: 36px;
+    width: 70px;
+    height: 70px;
     object-fit: contain;
-}
-
-.sidebar-header .brand {
-    font-weight: 700;
-    font-size: 16px;
-    color: var(--text-color);
-    flex: 1;
+    left: 100px;
 }
 
 .sidebar-close {
@@ -83,13 +76,13 @@
 }
 
 .nav-item a:hover {
-    background: #f3f4f6;
+    background: #4EA674;
     color: var(--primary-color);
 }
 
 .nav-item.active > a,
 .nav-item.active .dropdown-toggle {
-    background: #dcfce7;
+    background: #4EA674;
     color: var(--primary-color);
 }
 
