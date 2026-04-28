@@ -83,10 +83,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/export', [DataPenggunaController::class, 'export'])->name('export');
     });
 
-    // ================= ✅ BANK SAMPAH ROUTES (PAKAI VERSI LOKAL - LEBIH LENGKAP) =================
-    Route::prefix('bank-sampah')->name('bank_sampah.')->group(function () {
+       // ================= ✅ BANK SAMPAH ROUTES =================
+    Route::prefix('bank-sampah')->name('bank-sampah.')->group(function () {
         
-        // Data Penarikan
+        // ── Data Penarikan (dengan controller) ──
         Route::prefix('penarikan')->name('penarikan.')->group(function () {
             Route::get('/', [PenarikanController::class, 'index'])->name('index');
             Route::get('/{id}/detail', [PenarikanController::class, 'show'])->name('show');
@@ -94,20 +94,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/{id}', [PenarikanController::class, 'destroy'])->name('destroy');
         });
 
-        // Data Setor (opsional)
-        Route::prefix('setor')->name('setor.')->group(function () {
-            Route::get('/', [PenarikanController::class, 'setor'])->name('index');
-        });
-
-        // Jenis & Harga Sampah
-        Route::prefix('jenis-harga')->name('jenis_harga.')->group(function () {
-            Route::get('/', [PenarikanController::class, 'jenisHarga'])->name('index');
-        });
-
-        // Penjemputan
-        Route::prefix('penjemputan')->name('penjemputan.')->group(function () {
-            Route::get('/', [PenarikanController::class, 'penjemputan'])->name('index');
-        });
+        // ── Route sederhana untuk sidebar (langsung ke controller method) ──
+        Route::get('/setor', [PenarikanController::class, 'setor'])->name('setor');
+        Route::get('/tarik', [PenarikanController::class, 'index'])->name('tarik');
+        Route::get('/jenis-harga', [PenarikanController::class, 'jenisHarga'])->name('jenis-harga');
+        Route::get('/penjemputan', [PenarikanController::class, 'penjemputan'])->name('penjemputan');
+        
     });
     // ================= END BANK SAMPAH =================
 
