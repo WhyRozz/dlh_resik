@@ -14,9 +14,11 @@ use App\Http\Controllers\Admin\AccountController;
 use App\Http\Controllers\Admin\DataPenggunaController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\DashboardController;
 
 // ✅ BankSampah Controllers
 use App\Http\Controllers\BankSampah\PenarikanController;
+use App\Http\Controllers\BankSampah\PenjemputanController;
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -30,9 +32,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Protected routes (sudah login)
     Route::middleware('auth:admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
 
     // Kelola Laporan
@@ -98,9 +98,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/setor', [PenarikanController::class, 'setor'])->name('setor');
         Route::get('/tarik', [PenarikanController::class, 'index'])->name('tarik');
         Route::get('/jenis-harga', [PenarikanController::class, 'jenisHarga'])->name('jenis-harga');
-        Route::get('/penjemputan', [PenarikanController::class, 'penjemputan'])->name('penjemputan');
         
+
+        // Penjemputan
+        Route::prefix('penjemputan')->name('penjemputan.')->group(function () {
+        Route::get('/', [PenjemputanController::class, 'index'])->name('index');
+        Route::get('/{id}/detail', [PenjemputanController::class, 'show'])->name('show');
+        Route::patch('/{id}/approve', [PenjemputanController::class, 'approve'])->name('approve');
+        Route::delete('/{id}/reject', [PenjemputanController::class, 'reject'])->name('reject');
     });
+});
     // ================= END BANK SAMPAH =================
 
     // Logout

@@ -37,7 +37,7 @@
                     <li><a href="{{ route('admin.bank-sampah.setor') }}" class="{{ request()->routeIs('admin.bank-sampah.setor') ? 'active' : '' }}">Data Setor</a></li>
                     <li><a href="{{ route('admin.bank-sampah.tarik') }}" class="{{ request()->routeIs('admin.bank-sampah.tarik') ? 'active' : '' }}">Data Penarikan</a></li>
                     <li><a href="{{ route('admin.bank-sampah.jenis-harga') }}" class="{{ request()->routeIs('admin.bank-sampah.jenis') ? 'active' : '' }}">Jenis & Harga Sampah</a></li>
-                    <li><a href="{{ route('admin.bank-sampah.penjemputan') }}" class="{{ request()->routeIs('admin.bank-sampah.penjemputan') ? 'active' : '' }}">Penjemputan</a></li>
+                    <li><a href="{{ route('admin.bank-sampah.penjemputan.index') }}" class="{{ request()->routeIs('admin.bank-sampah.penjemputan') ? 'active' : '' }}">Penjemputan</a></li>
                 </ul>
             </li>
 
