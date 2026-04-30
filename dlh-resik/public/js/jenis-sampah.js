@@ -103,7 +103,7 @@ function previewImage(input) {
  */
 function confirmDelete(id, name) {
     document.getElementById('deleteName').textContent = name;
-    document.getElementById('deleteForm').action = `/admin/bank-sampah/jenis-harga/${id}`;
+    document.getElementById('deleteForm').action = `/admin/bank-sampah/jenis-sampah/${id}`;
     document.getElementById('deleteModal').classList.add('active');
 }
 
