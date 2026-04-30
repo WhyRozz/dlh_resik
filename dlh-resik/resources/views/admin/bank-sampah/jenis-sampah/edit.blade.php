@@ -306,9 +306,6 @@
                     <option value="">Pilih Satuan</option>
                     <option value="Kg" {{ old('satuan', $jenisSampah->satuan) == 'Kg' ? 'selected' : '' }}>Kg (Kilogram)</option>
                     <option value="Lt" {{ old('satuan', $jenisSampah->satuan) == 'Lt' ? 'selected' : '' }}>Lt (Liter)</option>
-                    <option value="Pcs" {{ old('satuan', $jenisSampah->satuan) == 'Pcs' ? 'selected' : '' }}>Pcs (Pieces)</option>
-                    <option value="Pack" {{ old('satuan', $jenisSampah->satuan) == 'Pack' ? 'selected' : '' }}>Pack</option>
-                    <option value="Lusin" {{ old('satuan', $jenisSampah->satuan) == 'Lusin' ? 'selected' : '' }}>Lusin</option>
                 </select>
                 @error('satuan')
                     <span class="invalid-feedback">{{ $message }}</span>

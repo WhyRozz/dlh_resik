@@ -300,9 +300,6 @@
                     <option value="">Pilih Satuan</option>
                     <option value="Kg" {{ old('satuan') == 'Kg' ? 'selected' : '' }}>Kg (Kilogram)</option>
                     <option value="Lt" {{ old('satuan') == 'Lt' ? 'selected' : '' }}>Lt (Liter)</option>
-                    <option value="Pcs" {{ old('satuan') == 'Pcs' ? 'selected' : '' }}>Pcs (Pieces)</option>
-                    <option value="Pack" {{ old('satuan') == 'Pack' ? 'selected' : '' }}>Pack</option>
-                    <option value="Lusin" {{ old('satuan') == 'Lusin' ? 'selected' : '' }}>Lusin</option>
                 </select>
                 @error('satuan')
                     <span class="invalid-feedback">{{ $message }}</span>
