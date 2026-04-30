@@ -56,3 +56,59 @@
         </div>
     </div>
 </div>
+
+
+
+{{-- =================================================================== --}}
+{{-- MODAL: Tambah/Edit Akun Petugas (Popup Style Penjemputan)          --}}
+{{-- =================================================================== --}}
+<div class="modal-overlay" id="modalPetugas">
+    <div class="modal-container">
+        <!-- Header -->
+        <div class="modal-header">
+            <h3 id="modalPetugasTitle">Tambah Akun Petugas</h3>
+            <button type="button" class="modal-close" id="btnClosePetugasModal">&times;</button>
+        </div>
+
+        <!-- Form Body -->
+        <form id="formPetugas" class="modal-body">
+            <input type="hidden" id="petugasId" name="id">
+            @csrf
+            
+            <div class="form-group">
+                <label for="namaLengkap">Nama Admin</label>
+                <input type="text" id="namaLengkap" name="nama_lengkap" placeholder="Masukkan nama admin" required>
+            </div>
+
+            <div class="form-group">
+                <label for="emailPetugas">Email</label>
+                <input type="email" id="emailPetugas" name="email" placeholder="contoh@email.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="noTelepon">No Telpon</label>
+                <input type="tel" id="noTelepon" name="no_telepon" placeholder="08xxxxxxxxxx" required>
+            </div>
+
+            <div class="form-group">
+                <label for="levelPetugas">Petugas</label>
+                <select id="levelPetugas" name="level" required>
+                    <option value="">-- Pilih Petugas --</option>
+                    <option value="petugas_dlh">Petugas DLH</option>
+                    <option value="bank_sampah">Bank Sampah</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="passwordPetugas">Kata Sandi <span id="passHint" style="font-weight:400; color:#6c757d; font-size:12px;"></span></label>
+                <input type="password" id="passwordPetugas" name="password" placeholder="••••••••">
+            </div>
+        </form>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="btnBatalPetugas">Batal</button>
+            <button type="submit" form="formPetugas" class="btn-primary" id="btnSimpanPetugas">Simpan</button>
+        </div>
+    </div>
+</div>

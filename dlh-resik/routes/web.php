@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\DataPenggunaController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PetugasController;
 
 // ✅ BankSampah Controllers
 use App\Http\Controllers\BankSampah\PenarikanController;
@@ -73,22 +74,33 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/{id}', [TpsController::class, 'update'])->name('update');
     });
 
-    // Kelola Akun
+    // KELOLA AKUN ADMIN (DENGAN OTP) 
     Route::prefix('akun')->name('akun.')->group(function () {
+        // CRUD Admin
         Route::get('/', [AccountController::class, 'index'])->name('index');
         Route::post('/', [AccountController::class, 'store'])->name('store');
         Route::put('/{id}', [AccountController::class, 'update'])->name('update');
         Route::delete('/{id}', [AccountController::class, 'destroy'])->name('destroy');
-
-        // OTP Endpoints
-        Route::post('/request-otp', [AccountController::class, 'requestOtp'])->name('request-otp');
+    
+    // Get admin data (JSON) untuk edi  t
+    Route::get('/{id}', [AccountController::class, 'show'])->name('show');
+    
+    // OTP Endpoints (HANYA 1x, jangan duplikat!)
+    Route::post('/request-otp', [AccountController::class, 'requestOtp'])->name('request-otp');
         Route::post('/verify-otp', [AccountController::class, 'verifyOtp'])->name('verify-otp');
+    
+    // AJAX: Get password
+    Route::post('/ajax/get-password', [AccountController::class, 'getPasswordPlaceholder'])->name('ajax.get-password');
+    Route::post('/ajax/get-password-raw', [AccountController::class, 'getPasswordRaw'])->name('ajax.get-password-raw');
+    }); // ← Tutup group 'akun' DI SINI
 
-        // AJAX: Get password (placeholder)
-        Route::post('/ajax/get-password', [AccountController::class, 'getPasswordPlaceholder'])->name('ajax.get-password');
-        Route::post('/ajax/get-password-raw', [AccountController::class, 'getPasswordRaw'])->name('ajax.get-password-raw');
-    }); // ← ✅ TUTUP GROUP 'akun' DI SINI, SEBELUM BANK SAMPAH
-
+    // KELOLA PETUGAS (TANPA OTP)
+    Route::prefix('petugas')->name('petugas.')->group(function () {
+        Route::post('/', [PetugasController::class, 'store'])->name('store');
+        Route::put('/{id}', [PetugasController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PetugasController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}', [PetugasController::class, 'show'])->name('show');
+    });
     // ================= ✅ DATA PENGGUNA (DARI REMOTE) =================
 
     // ================= ✅ BANK SAMPAH ROUTES =================
@@ -116,11 +128,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('/{id}/reject', [PenjemputanController::class, 'reject'])->name('reject');
         });
     });
+<<<<<<< HEAD
     // ================= END BANK SAMPAH =================
 
     // Logout
     //Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 }); // ← Tutup group 'admin'
+=======
+});
+}); 
+>>>>>>> 84e324df027a6e0f987d8ad7ce7a816317fa9e25
 
 // ================= ✅ API ROUTES (DARI REMOTE - HANYA 1, HAPUS DUPLIKAT) =================
 Route::get('/api/users/{id}', function ($id) {

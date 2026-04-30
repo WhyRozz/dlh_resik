@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Petugas; // ← PENTING: Import Model Petugas
 use App\Services\EncryptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log; // ← TAMBAHKAN INI
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -27,17 +29,20 @@ class AccountController extends Controller
      */
     public function index()
     {
-        // Ambil semua admin, urutkan: default dulu, lalu by ID
+        // 1. Ambil data Admin
         $admins = Admin::orderByRaw("
             CASE WHEN email = ? THEN 0 ELSE 1 END,
             id_admin ASC
         ", [self::DEFAULT_ADMIN_EMAIL])->get();
 
-        // Pisahkan akun utama dan tambahan
         $akunUtama = $admins->firstWhere('email', self::DEFAULT_ADMIN_EMAIL);
         $tambahan = $admins->reject(fn($a) => $a->email === self::DEFAULT_ADMIN_EMAIL)->values();
 
-        return view('admin.account.index', compact('admins', 'akunUtama', 'tambahan'));
+        // 2. Ambil data Petugas
+        $petugas = \App\Models\Petugas::orderBy('created_at', 'desc')->get();
+
+        // 3. Kirim ke view
+        return view('admin.account.index', compact('admins', 'akunUtama', 'tambahan', 'petugas'));
     }
 
     /**
@@ -127,7 +132,6 @@ class AccountController extends Controller
 
     /**
      * Request OTP untuk verifikasi aksi sensitif
-     * POST /admin/akun/request-otp
      */
     public function requestOtp(Request $request)
     {
@@ -148,8 +152,7 @@ class AccountController extends Controller
             'otp_expires' => $expiresAt,
         ]);
 
-        // Kirim email (pastikan config/mail.php sudah benar)
-        // Untuk development, OTP juga dikembalikan di response
+        // Kirim email
         Mail::raw("Kode OTP Admin SIMPELSI Anda: {$otp}\nBerlaku selama " . self::OTP_EXPIRE_MINUTES . " menit.", function ($message) use ($validated) {
             $message->to($validated['email'])->subject('Kode OTP Admin - SIMPELSI');
         });
@@ -157,13 +160,12 @@ class AccountController extends Controller
         return response()->json([
             'status' => app()->environment('local') ? 'success_dev' : 'success',
             'message' => 'Kode OTP telah dikirim ke email Anda.',
-            'otp' => app()->environment('local') ? $otp : null, // Hanya untuk dev
+            'otp' => app()->environment('local') ? $otp : null,
         ]);
     }
 
     /**
      * Verifikasi OTP
-     * POST /admin/akun/verify-otp
      */
     public function verifyOtp(Request $request)
     {
@@ -199,7 +201,7 @@ class AccountController extends Controller
     }
 
     /**
-     * AJAX: Get password placeholder (••••••••)
+     * AJAX: Get password placeholder
      */
     public function getPasswordPlaceholder(Request $request)
     {
@@ -214,8 +216,7 @@ class AccountController extends Controller
     }
 
     /**
-     * AJAX: Get password raw (decrypted) - HANYA UNTUK EDIT MODE
-     * ⚠️ Gunakan dengan hati-hati, hanya untuk admin yang sudah terautentikasi
+     * AJAX: Get password raw (decrypted)
      */
     public function getPasswordRaw(Request $request)
     {
@@ -235,6 +236,17 @@ class AccountController extends Controller
         return response()->json([
             'status' => 'success',
             'password' => $decrypted ?: '••••••••'
+        ]);
+    }
+
+    /**
+     * Get admin data (JSON) - untuk edit
+     */
+    public function show($id)
+    {
+        $admin = Admin::findOrFail($id);
+        return response()->json([
+            'email' => $admin->email
         ]);
     }
 }
