@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Data Pengguna')
+@section('title', 'RESIK - Data Pengguna')
 
 @section('content')
 <div class="page-header">
@@ -19,7 +19,7 @@
 <div class="filter-group">
     <a href="{{ route('admin.data-pengguna.index', ['filter' => 'all']) }}"
         class="filter-btn {{ $filter == 'all' ? 'active' : '' }}">
-        <i class="fas fa-users"></i> Semua ({{ \App\Models\Masyarakat::count() }})
+        <i class="fas fa-users"></i> Semua
     </a>
     <a href="{{ route('admin.data-pengguna.index', ['filter' => 'asn']) }}"
         class="filter-btn {{ $filter == 'asn' ? 'active' : '' }}">
@@ -63,15 +63,27 @@
                 </td>
                 <td>{{ $user->no_telp ?? '-' }}</td>
                 <td>
-                    <span class="badge {{ str_contains(strtolower($user->pekerjaan ?? ''), 'dinas') ? 'badge-asn' : 'badge-masyarakat' }}">
-                        {{ $user->pekerjaan ?? 'Masyarakat' }}
+                    @if($user->jenis_pengguna === 'PNS')
+                    <span class="badge badge-asn">
+                        {{ $user->nama_dinas ?? 'ASN/PNS' }}
                     </span>
+                    @else
+                    <span class="badge badge-masyarakat">
+                        Masyarakat
+                    </span>
+                    @endif
                 </td>
-                <td><strong>Rp {{ number_format($user->saldo_bank_sampah, 0, ',', '.') }}</strong></td>
+                <td><strong>Rp {{ number_format($user->saldo, 0, ',', '.') }}</strong></td>
                 <td>
-                    <button class="btn-icon" onclick="openModal({{ $user->id_masyarakat }})">
+                    @if($user->jenis_pengguna === 'PNS')
+                    <button class="btn-icon" onclick="openModal({{ $user->id }}, 'pns')">
                         <i class="fas fa-eye"></i> Detail
                     </button>
+                    @else
+                    <button class="btn-icon" onclick="openModal({{ $user->id }}, 'masyarakat')">
+                        <i class="fas fa-eye"></i> Detail
+                    </button>
+                    @endif
                 </td>
             </tr>
             @empty
@@ -85,7 +97,7 @@
     </table>
 
     <div class="pagination-wrapper">
-        {{ $users->links() }}
+        {{ $users->appends(['filter' => $filter])->links('pagination.custom') }}
     </div>
 </div>
 
@@ -98,7 +110,7 @@
         </div>
         <div class="modal-body">
             <div class="user-grid">
-                <div class="info-item">
+                <div class="info-item full-width">
                     <label>Nama Lengkap</label>
                     <span id="modalNama">-</span>
                 </div>
@@ -115,20 +127,24 @@
                     <span id="modalTelp">-</span>
                 </div>
                 <div class="info-item">
-                    <label>Pekerjaan</label>
+                    <label>Tanggal Lahir</label>
+                    <span id="modalTglLahir">-</span>
+                </div>
+                <div class="info-item">
+                    <label>Pekerjaan/Dinas</label>
                     <span id="modalPekerjaan">-</span>
+                </div>
+                <div class="info-item">
+                    <label>Kode Anggota</label>
+                    <span id="modalKodeAnggota">-</span>
                 </div>
                 <div class="info-item">
                     <label>Saldo Bank Sampah</label>
                     <span id="modalSaldo" style="color: #2e8b57; font-weight: bold;">-</span>
                 </div>
                 <div class="info-item full-width">
-                    <label>Alamat</label>
-                    <span id="modalAlamat">-</span>
-                </div>
-                <div class="info-item full-width">
-                    <label>QR Code</label>
-                    <div id="modalQrCode" style="margin-top: 10px;"></div>
+                    <label>Terdaftar Sejak</label>
+                    <span id="modalCreated">-</span>
                 </div>
             </div>
         </div>
@@ -364,6 +380,87 @@
         justify-content: flex-end;
     }
 
+    /* Pagination Styles */
+    .pagination-wrapper {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .pagination li {
+        display: inline-block;
+    }
+
+    .pagination li a,
+    .pagination li span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 12px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #555;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .pagination li a:hover {
+        background: #2e8b57;
+        color: white;
+        border-color: #2e8b57;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(46, 139, 87, 0.2);
+    }
+
+    .pagination li.active span {
+        background: linear-gradient(135deg, #2e8b57 0%, #1b5e20 100%);
+        color: white;
+        border-color: #2e8b57;
+        font-weight: 700;
+        box-shadow: 0 4px 8px rgba(46, 139, 87, 0.3);
+    }
+
+    .pagination li.disabled span {
+        color: #aaa;
+        background: #f0f0f0;
+        border-color: #e0e0e0;
+        cursor: not-allowed;
+    }
+
+    /* Previous/Next Text */
+    .pagination .page-info {
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+        margin: 0 15px;
+    }
+
+    .pagination-info {
+        font-size: 14px;
+        color: #666;
+        font-weight: 500;
+        background: #f8f9fa;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+    }
+
     @keyframes slideUp {
         from {
             transform: translateY(20px);
@@ -398,31 +495,67 @@
         .info-item.full-width {
             grid-column: span 1;
         }
+
+        .pagination {
+            gap: 5px;
+        }
+
+        .pagination li a,
+        .pagination li span {
+            min-width: 35px;
+            height: 35px;
+            padding: 0 8px;
+            font-size: 13px;
+        }
+
+        .pagination .page-info {
+            display: none;
+        }
+
+        .pagination-wrapper {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .pagination-info {
+            font-size: 13px;
+            padding: 8px 15px;
+        }
     }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-    function openModal(userId) {
-        // Ambil CSRF token dari meta tag
-        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+    function openModal(userId, userType) {
+        // Pastikan userId dan userType valid
+        if (!userId || !userType) {
+            console.error('Invalid userId or userType:', userId, userType);
+            alert('Data pengguna tidak valid');
+            return;
+        }
 
-        fetch(`/admin/api/users/${userId}`, {
+        // Bersihkan userId dari karakter aneh
+        userId = String(userId).trim();
+
+        const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        const url = `/admin/data-pengguna/api/${userType}/${userId}`;
+
+        console.log('Fetching from:', url);
+
+        fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': token || '',
                     'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
                 },
-                credentials: 'same-origin' // Penting: kirim cookies/session
             })
             .then(response => {
                 console.log('Response status:', response.status);
 
-                if (response.status === 401) {
-                    throw new Error('Session expired. Silakan login ulang.');
+                if (response.status === 404) {
+                    throw new Error('Data pengguna tidak ditemukan');
                 }
 
                 if (!response.ok) {
@@ -438,18 +571,9 @@
                 document.getElementById('modalNama').textContent = data.nama || '-';
                 document.getElementById('modalJenisKelamin').textContent = data.jenis_kelamin || '-';
                 document.getElementById('modalEmail').textContent = data.email || '-';
-                document.getElementById('modalTelp').textContent = data.no_telp || '-';
-                document.getElementById('modalPekerjaan').textContent = data.pekerjaan || 'Masyarakat';
-                document.getElementById('modalAlamat').textContent = data.alamat || '-';
-                document.getElementById('modalSaldo').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(data.saldo_bank_sampah || 0);
-
-                // QR Code
-                const qrCodeDiv = document.getElementById('modalQrCode');
-                if (data.qr_code_path) {
-                    qrCodeDiv.innerHTML = `<img src="/storage/${data.qr_code_path}" alt="QR Code" style="max-width: 200px; border-radius: 8px;">`;
-                } else {
-                    qrCodeDiv.innerHTML = '<span class="text-muted">QR Code belum tersedia</span>';
-                }
+                document.getElementById('modalTelp').textContent = data.no_telepon || '-';
+                document.getElementById('modalPekerjaan').textContent = data.nama_dinas || 'Masyarakat Umum';
+                document.getElementById('modalSaldo').textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(data.saldo || 0);
 
                 document.getElementById('userModal').classList.add('active');
             })
@@ -477,5 +601,4 @@
         }
     });
 </script>
-
 @endpush

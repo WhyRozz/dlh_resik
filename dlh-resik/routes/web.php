@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\BankSampah\PenarikanController;
 use App\Http\Controllers\BankSampah\PenjemputanController;
 
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
 
@@ -33,6 +34,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware('auth:admin')->group(function () {
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Di dalam group middleware auth:admin
+        Route::prefix('data-pengguna')->name('data-pengguna.')->group(function () {
+            Route::get('/', [DataPenggunaController::class, 'index'])->name('index');
+            Route::get('/export', [DataPenggunaController::class, 'export'])->name('export');
+
+            // ✅ API untuk detail user - TAMBAHKAN INI
+            Route::get('/api/{type}/{id}', [DataPenggunaController::class, 'show'])
+                ->where(['type' => 'masyarakat|pns'])
+                ->name('api.show');
+        });
     });
 
     // Kelola Laporan
@@ -78,14 +90,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     }); // ← ✅ TUTUP GROUP 'akun' DI SINI, SEBELUM BANK SAMPAH
 
     // ================= ✅ DATA PENGGUNA (DARI REMOTE) =================
-    Route::prefix('data-pengguna')->name('data-pengguna.')->group(function () {
-        Route::get('/', [DataPenggunaController::class, 'index'])->name('index');
-        Route::get('/export', [DataPenggunaController::class, 'export'])->name('export');
-    });
 
-       // ================= ✅ BANK SAMPAH ROUTES =================
+    // ================= ✅ BANK SAMPAH ROUTES =================
     Route::prefix('bank-sampah')->name('bank-sampah.')->group(function () {
-        
+
         // ── Data Penarikan (dengan controller) ──
         Route::prefix('penarikan')->name('penarikan.')->group(function () {
             Route::get('/', [PenarikanController::class, 'index'])->name('index');
@@ -98,16 +106,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/setor', [PenarikanController::class, 'setor'])->name('setor');
         Route::get('/tarik', [PenarikanController::class, 'index'])->name('tarik');
         Route::get('/jenis-harga', [PenarikanController::class, 'jenisHarga'])->name('jenis-harga');
-        
+
 
         // Penjemputan
         Route::prefix('penjemputan')->name('penjemputan.')->group(function () {
-        Route::get('/', [PenjemputanController::class, 'index'])->name('index');
-        Route::get('/{id}/detail', [PenjemputanController::class, 'show'])->name('show');
-        Route::patch('/{id}/approve', [PenjemputanController::class, 'approve'])->name('approve');
-        Route::delete('/{id}/reject', [PenjemputanController::class, 'reject'])->name('reject');
+            Route::get('/', [PenjemputanController::class, 'index'])->name('index');
+            Route::get('/{id}/detail', [PenjemputanController::class, 'show'])->name('show');
+            Route::patch('/{id}/approve', [PenjemputanController::class, 'approve'])->name('approve');
+            Route::delete('/{id}/reject', [PenjemputanController::class, 'reject'])->name('reject');
+        });
     });
-});
     // ================= END BANK SAMPAH =================
 
     // Logout
