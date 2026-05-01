@@ -7,11 +7,6 @@
         <input type="text" placeholder="Cari data berdasarkan nama atau lokasi...">
         <button><i class="fas fa-search"></i></button>
     </div>
-
-    <div class="navbar-user">
-        <span>Admin RESIK</span>
-        <div class="avatar">A</div>
-    </div>
 </nav>
 
 <style>

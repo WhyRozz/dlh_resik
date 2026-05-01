@@ -463,75 +463,76 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+        
+        const petugasId = document.getElementById('petugasId');
+        const isEdit = petugasId && petugasId.value !== '';
+        const btnSimpan = document.getElementById('btnSimpanPetugas');
+        
+        if (btnSimpan) {
+            btnSimpan.disabled = true;
+            const originalText = btnSimpan.textContent;
+            btnSimpan.textContent = isEdit ? 'Menyimpan...' : 'Menambahkan...';
+        }
+        
+        const formData = new FormData(form);
+
+        // --- PERBAIKAN MULAI DI SINI ---
+        const baseUrl = '{{ url("admin/petugas") }}';
+        let url = baseUrl;
+
+        // Kita paksa method pengiriman selalu 'POST' agar FormData terbaca stabil
+        if (isEdit) {
+            url = baseUrl + '/' + encodeURIComponent(petugasId.value);
+            // Method Spoofing: Laravel akan menganggap ini request PUT karena field ini
+            formData.append('_method', 'PUT'); 
+        }
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            });
             
-            const petugasId = document.getElementById('petugasId');
-            const isEdit = petugasId && petugasId.value !== '';
-            const btnSimpan = document.getElementById('btnSimpanPetugas');
+            const contentType = response.headers.get("content-type");
             
-            if (btnSimpan) {
-                btnSimpan.disabled = true;
-                const originalText = btnSimpan.textContent;
-                btnSimpan.textContent = isEdit ? 'Menyimpan...' : 'Menambahkan...';
-            }
-            
-            const formData = new FormData(form);
-            
-            // Route yang benar untuk Petugas (BUKAN admin.akun!)
-            const baseUrl = isEdit 
-                ? '{{ route("admin.petugas.update", ":id") }}'
-                : '{{ route("admin.petugas.store") }}';
-            
-            const url = isEdit && petugasId 
-                ? baseUrl.replace(':id', petugasId.value)
-                : baseUrl;
-            
-            const method = isEdit ? 'PUT' : 'POST';
-            
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
-                });
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const result = await response.json();
+                console.log('Response:', result);
                 
-                const contentType = response.headers.get("content-type");
-                
-                if (contentType && contentType.indexOf("application/json") !== -1) {
-                    const result = await response.json();
-                    
-                    if (result.success || response.ok) {
-                        alert('✅ Berhasil!');
-                        closeModalPetugas();
-                        location.reload();
-                    } else {
-                        let errorMsg = '❌ Gagal: ' + (result.message || 'Terjadi kesalahan');
-                        if (result.errors) {
-                            errorMsg += '\n\n';
-                            for (let field in result.errors) {
-                                errorMsg += field + ': ' + result.errors[field].join(', ') + '\n';
-                            }
-                        }
-                        alert(errorMsg);
-                    }
+                if (result.success || response.ok) {
+                    alert('✅ Berhasil!');
+                    closeModalPetugas();
+                    location.reload();
                 } else {
-                    const errorText = await response.text();
-                    console.error('Server Error:', errorText);
-                    alert('❌ Gagal: Terjadi kesalahan server.\n\nCek Console (F12) → Network tab untuk detail.');
+                    let errorMsg = '❌ Gagal: ' + (result.message || 'Terjadi kesalahan');
+                    if (result.errors) {
+                        errorMsg += '\n\n';
+                        for (let field in result.errors) {
+                            errorMsg += field + ': ' + result.errors[field].join(', ') + '\n';
+                        }
+                    }
+                    alert(errorMsg);
                 }
-            } catch (error) {
-                console.error('Fetch Error:', error);
-                alert('❌ Terjadi kesalahan jaringan.\n\nDetail: ' + error.message);
-            } finally {
-                if (btnSimpan) {
-                    btnSimpan.disabled = false;
-                    btnSimpan.textContent = isEdit ? 'Update' : 'Simpan';
-                }
+            } else {
+                const errorText = await response.text();
+                console.error('Server Error:', errorText);
+                alert('❌ Gagal: Server error. Cek Console (F12).');
             }
-        });
-    }
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            alert('❌ Network error: ' + error.message);
+        } finally {
+            if (btnSimpan) {
+                btnSimpan.disabled = false;
+                btnSimpan.textContent = isEdit ? 'Update' : 'Simpan';
+            }
+        }
+    });
+}
 });
 </script>
 @endpush
