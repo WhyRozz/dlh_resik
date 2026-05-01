@@ -8,11 +8,6 @@
     <link rel="stylesheet" href="{{ asset('css/account.css') }}">
 @endpush
 
-@section('content')
-<div class="content-header">
-    <h2>Kelola Akun Admin</h2>
-</div>
-
 {{-- Messages --}}
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
@@ -23,6 +18,17 @@
 @if($errors->any())
     <div class="alert alert-error">{{ $errors->first() }}</div>
 @endif
+
+@section('content')
+<div class="content-header">
+    <h2>Kelola Akun Admin</h2>
+</div>
+
+{{-- 🔍 Search Bar Modern (Nama & Email) --}}
+<div class="search-wrapper-akun">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" id="searchAkun" class="search-input-akun" placeholder="Cari akun petugas berdasarkan nama atau email">
+</div>
 
 {{-- ==================== BAGIAN 1: CARDS ADMIN ==================== --}}
 <div class="accounts-grid">
@@ -554,4 +560,31 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 });
 </script>
+
+<script>
+// 🔍 Search Akun: Filter by Nama & Email (Client-side)
+document.getElementById('searchAkun')?.addEventListener('input', function(e) {
+    const keyword = e.target.value.toLowerCase().trim();
+    
+    // Filter Cards (Akun Utama & Kedua)
+    const cards = document.querySelectorAll('.account-card');
+    cards.forEach(card => {
+        const spans = card.querySelectorAll('span');
+        let found = false;
+        spans.forEach(span => {
+            const text = span.textContent.toLowerCase();
+            if (text.includes(keyword)) found = true;
+        });
+        card.style.display = found ? '' : 'none';
+    });
+    
+    // Filter Table Rows (Petugas)
+    const rows = document.querySelectorAll('.petugas-table-container tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(keyword) ? '' : 'none';
+    });
+});
+</script>
+
 @endpush

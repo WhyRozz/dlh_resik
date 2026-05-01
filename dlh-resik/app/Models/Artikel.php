@@ -24,6 +24,9 @@ class Artikel extends Model
         'tanggal' => 'datetime'
     ];
 
+    /**
+     * Get foto URL attribute
+     */
     public function getFotoUrlAttribute()
     {
         return $this->foto ? asset('storage/' . $this->foto) : null;

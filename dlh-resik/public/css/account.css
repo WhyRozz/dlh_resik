@@ -731,3 +731,49 @@
         font-size: 13px;
     }
 }
+
+/* =========================================
+   SEARCH BAR MODERN - HALAMAN AKUN
+   ========================================= */
+.search-wrapper-akun {
+    margin-top: -100px;
+    width: 100%;
+    justify-content: flex-end;
+    max-width: 400px;
+    margin-bottom: 50px; 
+}
+
+.search-input-akun {
+    width: 100%;
+    padding: 12px 20px 12px 45px; /* Kiri besar untuk icon */
+    border: 2px solid #eef2f5;
+    border-radius: 50px; /* Bulat penuh */
+    font-size: 14px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.search-input-akun:focus {
+    border-color: #2e8b57;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(46, 139, 87, 0.15); /* Efek glow */
+}
+
+.search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    font-size: 15px;
+    pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .search-wrapper-akun {
+        max-width: 100%;
+        margin: 0 0 15px 0;
+    }
+}
