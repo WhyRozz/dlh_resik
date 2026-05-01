@@ -10,7 +10,7 @@
 
 @section('content')
 <div class="content-header">
-    <h2>Kelola Akun Admin ({{ count($admins) }}/3)</h2>
+    <h2>Kelola Akun Admin</h2>
 </div>
 
 {{-- Messages --}}
@@ -29,7 +29,7 @@
     {{-- Akun Utama --}}
     <div class="account-card">
         <div class="card-header">
-            <div class="card-title"><span>🔒</span> Akun Utama</div>
+            <div class="card-title"><span>🔒</span> Akun Utama WEB</div>
             <span class="badge-default">DEFAULT</span>
         </div>
         <div class="account-info">
@@ -55,7 +55,7 @@
     {{-- Akun Kedua --}}
     <div class="account-card">
         <div class="card-header">
-            <div class="card-title"><span>👤</span> Akun Kedua</div>
+            <div class="card-title"><span>👤</span> Akun Kedua WEB</div>
             <span class="badge-default">DEFAULT</span>
         </div>
         <div class="account-info">
@@ -183,6 +183,7 @@
 {{-- ==================== MODALS OTP (DARI PARTIALS) ==================== --}}
 @include('admin.account.partials.modals')
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
 
 @push('scripts')
@@ -353,15 +354,26 @@ function deleteAdmin(id) {
 
 // ==================== KONFIRMASI HAPUS PETUGAS ====================
 function confirmDelete(id) {
-    const modal = document.getElementById('deleteModal');
-    if (modal) {
-        modal.style.display = 'flex';
-        const baseUrl = "{{ url('admin/petugas') }}";
-        const deleteForm = document.getElementById('deleteForm');
-        if (deleteForm) {
-            deleteForm.action = baseUrl + '/' + id;
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Data petugas akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545', // Merah sesuai status-ditolak
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const baseUrl = "{{ url('admin/petugas') }}";
+            const deleteForm = document.getElementById('deleteForm');
+            if (deleteForm) {
+                deleteForm.action = baseUrl + '/' + id;
+                deleteForm.submit();
+            }
         }
-    }
+    });
 }
 
 function closeDeleteModal() {
@@ -504,19 +516,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Response:', result);
                 
                 if (result.success || response.ok) {
-                    alert('✅ Berhasil!');
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: isEdit ? 'Data petugas telah diperbarui.' : 'Petugas baru berhasil ditambahkan.',
+                    icon: 'success',
+                    confirmButtonColor: '#20A726',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
                     closeModalPetugas();
                     location.reload();
-                } else {
-                    let errorMsg = '❌ Gagal: ' + (result.message || 'Terjadi kesalahan');
-                    if (result.errors) {
-                        errorMsg += '\n\n';
-                        for (let field in result.errors) {
-                            errorMsg += field + ': ' + result.errors[field].join(', ') + '\n';
-                        }
-                    }
-                    alert(errorMsg);
-                }
+                });
+            } else {
+                let errorMsg = result.message || 'Terjadi kesalahan';
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: errorMsg,
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
             } else {
                 const errorText = await response.text();
                 console.error('Server Error:', errorText);
