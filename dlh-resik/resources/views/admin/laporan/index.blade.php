@@ -9,15 +9,12 @@
 @endpush
 
 @section('content')
-<div class="content-header">
-    <h2>Kelola Laporan Aduan</h2>
-</div>
+{{-- Header + Search dalam satu wrapper --}}
+<div class="page-search-bar"><input type="text" class="search-input" id="searchInput" placeholder="Cari data berdasarkan nama atau lokasi..."></div>
+<div class="content-card">
+    <h2 class="card-title">Kelola Laporan Aduan</h2>
+    <div class="table-container">
 
-<div class="search-bar">
-    <input type="text" class="search-input" id="searchInput" placeholder="Cari laporan berdasarkan nama atau lokasi...">
-</div>
-
-<div class="table-container">
     <table>
         <thead>
             <tr>
@@ -150,7 +147,7 @@
         </tbody>
     </table>
 </div>
-
+</div>
 {{-- Popup Modals --}}
 @include('admin.laporan.partials.modals')
 @endsection

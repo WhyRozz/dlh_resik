@@ -8,11 +8,6 @@
     <link rel="stylesheet" href="{{ asset('css/account.css') }}">
 @endpush
 
-@section('content')
-<div class="content-header">
-    <h2>Kelola Akun Admin ({{ count($admins) }}/3)</h2>
-</div>
-
 {{-- Messages --}}
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
@@ -24,12 +19,23 @@
     <div class="alert alert-error">{{ $errors->first() }}</div>
 @endif
 
+@section('content')
+<div class="content-header">
+    <h2>Kelola Akun Admin</h2>
+</div>
+
+{{-- 🔍 Search Bar Modern (Nama & Email) --}}
+<div class="search-wrapper-akun">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" id="searchAkun" class="search-input-akun" placeholder="Cari akun petugas berdasarkan nama atau email">
+</div>
+
 {{-- ==================== BAGIAN 1: CARDS ADMIN ==================== --}}
 <div class="accounts-grid">
     {{-- Akun Utama --}}
     <div class="account-card">
         <div class="card-header">
-            <div class="card-title"><span>🔒</span> Akun Utama</div>
+            <div class="card-title"><span>🔒</span> Akun Utama WEB</div>
             <span class="badge-default">DEFAULT</span>
         </div>
         <div class="account-info">
@@ -55,7 +61,7 @@
     {{-- Akun Kedua --}}
     <div class="account-card">
         <div class="card-header">
-            <div class="card-title"><span>👤</span> Akun Kedua</div>
+            <div class="card-title"><span>👤</span> Akun Kedua WEB</div>
             <span class="badge-default">DEFAULT</span>
         </div>
         <div class="account-info">
@@ -183,6 +189,7 @@
 {{-- ==================== MODALS OTP (DARI PARTIALS) ==================== --}}
 @include('admin.account.partials.modals')
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
 
 @push('scripts')
@@ -353,15 +360,26 @@ function deleteAdmin(id) {
 
 // ==================== KONFIRMASI HAPUS PETUGAS ====================
 function confirmDelete(id) {
-    const modal = document.getElementById('deleteModal');
-    if (modal) {
-        modal.style.display = 'flex';
-        const baseUrl = "{{ url('admin/petugas') }}";
-        const deleteForm = document.getElementById('deleteForm');
-        if (deleteForm) {
-            deleteForm.action = baseUrl + '/' + id;
+    Swal.fire({
+        title: 'Apakah Anda yakin?',
+        text: "Data petugas akan dihapus permanen!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545', // Merah sesuai status-ditolak
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const baseUrl = "{{ url('admin/petugas') }}";
+            const deleteForm = document.getElementById('deleteForm');
+            if (deleteForm) {
+                deleteForm.action = baseUrl + '/' + id;
+                deleteForm.submit();
+            }
         }
-    }
+    });
 }
 
 function closeDeleteModal() {
@@ -463,75 +481,110 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+        
+        const petugasId = document.getElementById('petugasId');
+        const isEdit = petugasId && petugasId.value !== '';
+        const btnSimpan = document.getElementById('btnSimpanPetugas');
+        
+        if (btnSimpan) {
+            btnSimpan.disabled = true;
+            const originalText = btnSimpan.textContent;
+            btnSimpan.textContent = isEdit ? 'Menyimpan...' : 'Menambahkan...';
+        }
+        
+        const formData = new FormData(form);
+
+        // --- PERBAIKAN MULAI DI SINI ---
+        const baseUrl = '{{ url("admin/petugas") }}';
+        let url = baseUrl;
+
+        // Kita paksa method pengiriman selalu 'POST' agar FormData terbaca stabil
+        if (isEdit) {
+            url = baseUrl + '/' + encodeURIComponent(petugasId.value);
+            // Method Spoofing: Laravel akan menganggap ini request PUT karena field ini
+            formData.append('_method', 'PUT'); 
+        }
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            });
             
-            const petugasId = document.getElementById('petugasId');
-            const isEdit = petugasId && petugasId.value !== '';
-            const btnSimpan = document.getElementById('btnSimpanPetugas');
+            const contentType = response.headers.get("content-type");
             
-            if (btnSimpan) {
-                btnSimpan.disabled = true;
-                const originalText = btnSimpan.textContent;
-                btnSimpan.textContent = isEdit ? 'Menyimpan...' : 'Menambahkan...';
-            }
-            
-            const formData = new FormData(form);
-            
-            // Route yang benar untuk Petugas (BUKAN admin.akun!)
-            const baseUrl = isEdit 
-                ? '{{ route("admin.petugas.update", ":id") }}'
-                : '{{ route("admin.petugas.store") }}';
-            
-            const url = isEdit && petugasId 
-                ? baseUrl.replace(':id', petugasId.value)
-                : baseUrl;
-            
-            const method = isEdit ? 'PUT' : 'POST';
-            
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    }
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const result = await response.json();
+                console.log('Response:', result);
+                
+                if (result.success || response.ok) {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: isEdit ? 'Data petugas telah diperbarui.' : 'Petugas baru berhasil ditambahkan.',
+                    icon: 'success',
+                    confirmButtonColor: '#20A726',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    closeModalPetugas();
+                    location.reload();
                 });
-                
-                const contentType = response.headers.get("content-type");
-                
-                if (contentType && contentType.indexOf("application/json") !== -1) {
-                    const result = await response.json();
-                    
-                    if (result.success || response.ok) {
-                        alert('✅ Berhasil!');
-                        closeModalPetugas();
-                        location.reload();
-                    } else {
-                        let errorMsg = '❌ Gagal: ' + (result.message || 'Terjadi kesalahan');
-                        if (result.errors) {
-                            errorMsg += '\n\n';
-                            for (let field in result.errors) {
-                                errorMsg += field + ': ' + result.errors[field].join(', ') + '\n';
-                            }
-                        }
-                        alert(errorMsg);
-                    }
-                } else {
-                    const errorText = await response.text();
-                    console.error('Server Error:', errorText);
-                    alert('❌ Gagal: Terjadi kesalahan server.\n\nCek Console (F12) → Network tab untuk detail.');
-                }
-            } catch (error) {
-                console.error('Fetch Error:', error);
-                alert('❌ Terjadi kesalahan jaringan.\n\nDetail: ' + error.message);
-            } finally {
-                if (btnSimpan) {
-                    btnSimpan.disabled = false;
-                    btnSimpan.textContent = isEdit ? 'Update' : 'Simpan';
-                }
+            } else {
+                let errorMsg = result.message || 'Terjadi kesalahan';
+                Swal.fire({
+                    title: 'Gagal!',
+                    text: errorMsg,
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
             }
-        });
-    }
+            } else {
+                const errorText = await response.text();
+                console.error('Server Error:', errorText);
+                alert('❌ Gagal: Server error. Cek Console (F12).');
+            }
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            alert('❌ Network error: ' + error.message);
+        } finally {
+            if (btnSimpan) {
+                btnSimpan.disabled = false;
+                btnSimpan.textContent = isEdit ? 'Update' : 'Simpan';
+            }
+        }
+    });
+}
 });
 </script>
+
+<script>
+// 🔍 Search Akun: Filter by Nama & Email (Client-side)
+document.getElementById('searchAkun')?.addEventListener('input', function(e) {
+    const keyword = e.target.value.toLowerCase().trim();
+    
+    // Filter Cards (Akun Utama & Kedua)
+    const cards = document.querySelectorAll('.account-card');
+    cards.forEach(card => {
+        const spans = card.querySelectorAll('span');
+        let found = false;
+        spans.forEach(span => {
+            const text = span.textContent.toLowerCase();
+            if (text.includes(keyword)) found = true;
+        });
+        card.style.display = found ? '' : 'none';
+    });
+    
+    // Filter Table Rows (Petugas)
+    const rows = document.querySelectorAll('.petugas-table-container tbody tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(keyword) ? '' : 'none';
+    });
+});
+</script>
+
 @endpush

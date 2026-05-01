@@ -13,10 +13,19 @@ class ArtikelController extends Controller
     /**
      * Tampilkan daftar artikel
      */
-    public function index()
-    {
-        $artikelList = Artikel::orderBy('tanggal', 'desc')->get();
-        return view('admin.artikel.index', compact('artikelList'));
+    public function index(Request $request)
+{
+    $query = Artikel::query();
+    
+    // Search berdasarkan judul
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where('judul', 'LIKE', "%{$search}%");
+    }
+    
+    $artikelList = $query->orderBy('tanggal', 'desc')->get();
+    
+    return view('admin.artikel.index', compact('artikelList'));
     }
 
     /**
@@ -39,9 +48,6 @@ class ArtikelController extends Controller
     /**
      * Simpan artikel baru
      */
-    /**
-     * Simpan artikel baru
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -54,6 +60,7 @@ class ArtikelController extends Controller
             'deskripsi.required' => 'Deskripsi Artikel wajib diisi.',
             'tanggal.required' => 'Tanggal Publikasi wajib diisi.',
             'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau GIF.',
             'foto.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
@@ -91,6 +98,7 @@ class ArtikelController extends Controller
             'deskripsi.required' => 'Deskripsi Artikel wajib diisi.',
             'tanggal.required' => 'Tanggal Publikasi wajib diisi.',
             'foto.image' => 'File harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus JPG, JPEG, PNG, atau GIF.',
             'foto.max' => 'Ukuran gambar maksimal 2MB.',
         ]);
 
@@ -123,16 +131,25 @@ class ArtikelController extends Controller
      */
     public function destroy($id)
     {
-        $artikel = Artikel::findOrFail($id);
+        try {
+            $artikel = Artikel::findOrFail($id);
 
-        // Hapus file foto jika ada
-        if ($artikel->foto && Storage::disk('public')->exists($artikel->foto)) {
-            Storage::disk('public')->delete($artikel->foto);
+            // Hapus file foto jika ada
+            if ($artikel->foto && Storage::disk('public')->exists($artikel->foto)) {
+                Storage::disk('public')->delete($artikel->foto);
+            }
+
+            $artikel->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Artikel berhasil dihapus!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus artikel.'
+            ], 500);
         }
-
-        $artikel->delete();
-
-        return redirect()->route('admin.artikel.index')
-            ->with('success', 'Artikel berhasil dihapus!');
     }
 }
