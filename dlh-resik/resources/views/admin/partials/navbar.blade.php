@@ -2,11 +2,6 @@
     <button class="menu-toggle-btn" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
     </button>
-
-    <div class="navbar-search">
-        <input type="text" placeholder="Cari data berdasarkan nama atau lokasi...">
-        <button><i class="fas fa-search"></i></button>
-    </div>
 </nav>
 
 <style>
