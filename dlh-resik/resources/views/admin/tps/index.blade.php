@@ -9,9 +9,12 @@
 @endpush
 
 @section('content')
-<div class="content-header">
-    <h2>Kelola TPS</h2>
-</div>
+{{-- Notifikasi sukses --}}
+@if(session('success'))
+    <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 12px 20px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #28a745;">
+        {{ session('success') }}
+    </div>
+@endif
 
 <div class="search-bar">
     <input type="text" class="search-input" id="searchInput" placeholder="Cari TPS berdasarkan nama atau lokasi...">
@@ -38,7 +41,7 @@
         </thead>
         <tbody id="tpsTableBody">
             @forelse($tpsList as $tps)
-                <tr>
+            <tr data-id="{{ $tps->id_tps }}">  {{-- ✅ TAMBAHKAN data-id --}}
                     <td>{{ $tps->id_tps }}</td>
                     <td>{{ $tps->nama_tps }}</td>
                     <td>
@@ -80,6 +83,38 @@
 
 {{-- Popup Modals --}}
 @include('admin.tps.partials.modals')
+
+{{-- ✅ TAMBAHKAN INI sebelum @endsection --}}
+<div id="errorPopup" class="popup-overlay">
+    <div class="popup-content error">
+        <h3>Kesalahan!</h3>
+        <p id="errorMessage">Terjadi kesalahan.</p>
+        <button type="button" class="popup-btn" onclick="closeErrorPopup()">Tutup</button>
+    </div>
+</div>
+
+<script>
+function closeErrorPopup() {
+    const popup = document.getElementById('errorPopup');
+    popup.querySelector('.popup-content').classList.remove('show');
+    setTimeout(() => {
+        popup.classList.remove('active');
+    }, 300);
+}
+
+// Show error popup if validation errors exist
+@if($errors->any())
+    document.addEventListener('DOMContentLoaded', function() {
+        const errorMsg = "{{ $errors->first() }}";
+        document.getElementById('errorMessage').textContent = errorMsg;
+        const popup = document.getElementById('errorPopup');
+        popup.classList.add('active');
+        setTimeout(() => {
+            popup.querySelector('.popup-content').classList.add('show');
+        }, 10);
+    });
+@endif
+</script>
 @endsection
 
 @push('scripts')

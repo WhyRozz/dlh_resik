@@ -123,6 +123,43 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                        $levelNames = [
+                            'petugas_dlh' => 'Petugas DLH',
+                            'bank_sampah_kelurahan_kauman_kauman_nganjuk' => 'BS Kel. Kauman (Kauman, Nganjuk)',
+                            'bank_sampah_kramat_bersih_kramat_nganjuk' => 'BS Kramat Bersih (Kramat, Nganjuk)',
+                            'bank_sampah_kelurahan_cangkringan_cangkringan_nganjuk' => 'BS Kel. Cangkringan (Cangkringan, Nganjuk)',
+                            'bank_sampah_ngudi_sariro_jatirejo_nganjuk' => 'BS Ngudi Sariro (Jatirejo, Nganjuk)',
+                            'bank_sampah_margo_utomo_begadung_nganjuk' => 'BS Margo Utomo (Begadung, Nganjuk)',
+                            'bank_sampah_sejahtera_kartoharjo_nganjuk' => 'BS Sejahtera (Kartoharjo, Nganjuk)',
+                            'bank_sampah_melati_kedungdowo_nganjuk' => 'BS Melati (Kedungdowo, Nganjuk)',
+                            'bank_sampah_anggrek_werungotok_nganjuk' => 'BS Anggrek (Werungotok, Nganjuk)',
+                            'bank_sampah_sumber_rejeki_werungotok_nganjuk' => 'BS Sumber Rejeki (Werungotok, Nganjuk)',
+                            'bank_sampah_beringin_hijau_ringinanom_nganjuk' => 'BS Beringin Hijau (Ringinanom, Nganjuk)',
+                            'bank_sampah_ploso_ploso_nganjuk' => 'BS Ploso (Ploso, Nganjuk)',
+                            'bank_sampah_mulyo_agung_kudu_kertosono' => 'BS Mulyo Agung (Kudu, Kertosono)',
+                            'bank_sampah_estu_sae_petak_bagor' => 'BS Estu Sae (Petak, Bagor)',
+                            'bank_sampah_desa_ngangkatan_ngangkatan_rejoso' => 'BS Desa Ngangkatan (Ngangkatan, Rejoso)',
+                            'bank_sampah_desa_jegreg_jegreg_lengkong' => 'BS Desa Jegreg (Jegreg, Lengkong)',
+                            'bank_sampah_musirkidul_musirkidul_rejoso' => 'BS Musirkidul (Musirkidul, Rejoso)',
+                            'bank_sampah_tanjung_tanjunganom_tanjunganom' => 'BS Tanjung (Tanjunganom)',
+                            'bank_sampah_flamboyan_loceret_loceret' => 'BS Flamboyan (Loceret)',
+                            'bank_sampah_pelita_bogo_nganjuk' => 'BS Pelita (Bogo, Nganjuk)',
+                            'bank_sampah_desa_getas_getas_tanjunganom' => 'BS Desa Getas (Getas, Tanjunganom)',
+                            'bank_sampah_mbejaji_juwet_ngronggot' => 'BS Mbejaji (Juwet, Ngronggot)',
+                            'bank_sampah_kedondong_kedondong_bagor' => 'BS Kedondong (Kedondong, Bagor)',
+                            'bank_sampah_sinar_terang_jampes_pace' => 'BS Sinar Terang (Jampes, Pace)',
+                            'bank_sampah_desa_blongko_blongko_ngetos' => 'BS Desa Blongko (Blongko, Ngetos)',
+                            'bank_sampah_bukur_bukur_patianrowo' => 'BS Bukur (Bukur, Patianrowo)',
+                            'bank_sampah_bungur_makmur_bungur_sukomoro' => 'BS Bungur Makmur (Bungur, Sukomoro)',
+                            'bank_sampah_seger_waras_mabung_baron' => 'BS Seger Waras (Mabung, Baron)',
+                            'bank_sampah_maju_bahagia_gondanglegi_prambon' => 'BS Maju Bahagia (Gondanglegi, Prambon)',
+                            'bank_sampah_barokah_kemlokolegi_baron' => 'BS Barokah (Kemlokolegi, Baron)',
+                            'bank_sampah_dahlia_senjayan_gondang' => 'BS Dahlia (Senjayan, Gondang)',
+                            'bank_sampah_cengkok_cengkok_ngronggot' => 'BS Cengkok (Cengkok, Ngronggot)',
+                            'bank_sampah_induk_salepok_omahe_nganjuk_kedondong_bagor' => 'BS Induk Salepok Omahe Nganjuk (Kedondong, Bagor)',
+                        ];
+                    @endphp
                         @foreach($petugas as $index => $p)
                             <tr style="border-bottom: 1px solid #eee;">
                                 <td style="padding: 12px 15px;">{{ $index + 1 }}</td>
@@ -130,22 +167,23 @@
                                 <td style="padding: 12px 15px;">{{ htmlspecialchars($p->email) }}</td>
                                 <td style="padding: 12px 15px;">{{ htmlspecialchars($p->no_telepon) }}</td>
                                 <td style="padding: 12px 15px;">
-                                    <span style="display: inline-block; padding: 4px 12px; background: #e8f5e9; color: #2e7d32; border-radius: 4px; font-size: 12px; font-weight: 500;">
-                                        {{ $p->level === 'petugas_dlh' ? 'Petugas DLH' : 'Bank Sampah' }}
-                                    </span>
-                                </td>
+                                <span style="display: inline-block; padding: 4px 12px; background: #e8f5e9; color: #2e7d32; border-radius: 4px; font-size: 12px; font-weight: 500;">
+                                    {{ $levelNames[$p->level] ?? $p->level }}
+                                </span>
+                            </td>
+                            
                                 <td style="padding: 12px 15px;">••••••••••••</td>
                                 <td style="padding: 12px 15px; text-align: center;">
                                     <button type="button" class="btn-edit-modal" 
-                                            onclick="openPetugasModal('edit', {
-                                                id: '{{ $p->id_petugas }}',
-                                                nama: '{{ addslashes($p->nama_lengkap) }}',
-                                                email: '{{ addslashes($p->email) }}',
-                                                telpon: '{{ addslashes($p->no_telepon) }}',
-                                                level: '{{ $p->level }}'
-                                            })"
-                                            style="display: inline-block; margin: 0 2px; padding: 5px 10px; background: #fff3cd; color: #856404; border: none; border-radius: 4px; cursor: pointer;"
-                                            title="Edit">✏️</button>
+                                    onclick='openPetugasModal("edit", {{ json_encode([
+                                        "id" => $p->id_petugas,
+                                        "nama" => $p->nama_lengkap,
+                                        "email" => $p->email,
+                                        "telpon" => $p->no_telepon,
+                                        "level" => $p->level
+                                    ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }})'
+                                    style="display: inline-block; margin: 0 2px; padding: 5px 10px; background: #fff3cd; color: #856404; border: none; border-radius: 4px; cursor: pointer;"
+                                    title="Edit">✏️</button>
                                     <button onclick="confirmDelete({{ $p->id_petugas }})" 
                                             style="display: inline-block; margin: 0 2px; padding: 5px 10px; background: #f8d7da; color: #721c24; border: none; border-radius: 4px; cursor: pointer;"
                                             title="Hapus">🗑️</button>
