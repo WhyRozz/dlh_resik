@@ -1,7 +1,6 @@
 @extends('layouts.admin')
 
 @section('title', 'RESIK - Jenis & Harga Sampah')
-
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/jenis-sampah.css') }}">
 @endpush
