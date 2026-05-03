@@ -14,7 +14,7 @@ class PenarikanController extends Controller
     public function index()
 {
     $penarikans = Penarikan::orderBy('tanggal_penarikan', 'desc')->get();
-    return view('bank-sampah.penarikan.index', compact('penarikans'));
+    return view('admin.bank-sampah.penarikan.index', compact('penarikans'));
 }
     /**
      * Tampilkan detail penarikan
