@@ -12,11 +12,10 @@ class PenarikanController extends Controller
      * Tampilkan daftar penarikan
      */
     public function index()
-    {
-        $penarikans = Penarikan::latest()->get();
-        return view('bank-sampah.penarikan.index', compact('penarikans'));
-    }
-
+{
+    $penarikans = Penarikan::orderBy('tanggal_penarikan', 'desc')->get();
+    return view('bank-sampah.penarikan.index', compact('penarikans'));
+}
     /**
      * Tampilkan detail penarikan
      */
