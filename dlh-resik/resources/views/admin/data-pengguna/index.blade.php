@@ -14,7 +14,7 @@
     </div>
     <div class="header-actions">
         <a href="{{ route('admin.data-pengguna.export', ['filter' => $filter]) }}" class="btn-export">
-            <i class="fas fa-file-excel"></i> Export Excel
+            <img src="{{ asset('assets/icons/excel.png') }}" alt="Beranda" class="custom-icon"></i> Export Excel
         </a>
     </div>
 </div>

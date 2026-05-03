@@ -111,7 +111,7 @@
         @if($petugas->count() > 0)
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse;">
-                    <thead style="background: #f5f5f5;">
+                    <thead style="background: #e6f2e6;">
                         <tr>
                             <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">No</th>
                             <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Nama Petugas</th>
