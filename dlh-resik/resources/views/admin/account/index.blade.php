@@ -114,10 +114,10 @@
                     <thead style="background: #f5f5f5;">
                         <tr>
                             <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">No</th>
-                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Nama Admin</th>
+                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Nama Petugas</th>
                             <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Email</th>
                             <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">No Telpon</th>
-                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Petugas</th>
+                            <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Wilayah Kerja</th>
                             <th style="padding: 12px 15px; text-align: left; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Kata Sandi</th>
                             <th style="padding: 12px 15px; text-align: center; border-bottom: 2px solid #ddd; font-weight: 600; color: #333;">Aksi</th>
                         </tr>
@@ -182,11 +182,17 @@
                                         "telpon" => $p->no_telepon,
                                         "level" => $p->level
                                     ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) }})'
-                                    style="display: inline-block; margin: 0 2px; padding: 5px 10px; background: #fff3cd; color: #856404; border: none; border-radius: 4px; cursor: pointer;"
-                                    title="Edit">✏️</button>
+                                    <button onclick='openPetugasModal("edit", ...)' 
+                                    style="display: inline-block; margin: 0 2px; padding: 5px 10px; background: #fff3cd; color: #856404; border: none; border-radius: 4px; cursor: pointer; vertical-align: middle;" 
+                                    title="Edit">
+                                    <img src="{{ asset('assets/icons/edit.png') }}" alt="Edit" style="width: 18px; height: 18px; vertical-align: middle;">
+                                    </button>
+                                    
                                     <button onclick="confirmDelete({{ $p->id_petugas }})" 
-                                            style="display: inline-block; margin: 0 2px; padding: 5px 10px; background: #f8d7da; color: #721c24; border: none; border-radius: 4px; cursor: pointer;"
-                                            title="Hapus">🗑️</button>
+                                    style="display: inline-block; margin: 0 2px; padding: 5px 10px; background: #f8d7da; color: #721c24; border: none; border-radius: 4px; cursor: pointer; vertical-align: middle;"
+                                    title="Hapus">
+                                    <img src="{{ asset('assets/icons/delete.png') }}" alt="Hapus" style="width: 18px; height: 18px; object-fit: contain; display: block;">
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach

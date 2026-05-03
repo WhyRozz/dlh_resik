@@ -6,20 +6,38 @@
     margin-bottom: 20px;
 }
 
+
+/* --- SEARCH BAR (FINAL - FORCE STYLE) --- */
 .search-bar {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    margin-top: -50px !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding-right: 100px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .search-input {
-    width: 100%;
-    padding: 8px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
+    width: 100% !important;
+    max-width: 400px !important;
+    padding: 10px 18px !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 25px !important;
+    font-size: 14px !important;
+    background: #f8f9fa !important;
+    box-sizing: border-box !important; /* 🔥 Kunci: agar padding tidak melebarkan elemen */
+    transition: all 0.3s ease !important;
+}
+
+.search-input::placeholder {
+    color: #aaa !important;
+}
+
+.search-input:focus {
+    background: #fff !important;
+    border-color: #2e8b57 !important;
+    outline: none !important;
+    box-shadow: 0 2px 8px rgba(46, 139, 87, 0.15) !important;
 }
 
 .table-container {
@@ -52,17 +70,17 @@ table {
     font-size: 14px;
 }
 
-th,
-td {
+th, td {
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee; /* Garis lebih tipis */
+    vertical-align: top;
 }
 
 th {
-    background: #f8f9fa;
+    background: #f0f5ef; /* Hijau muda seperti laporan */
     font-weight: 600;
-    color: #555;
+    color: #333; /* Teks header gelap */
     text-transform: uppercase;
     font-size: 13px;
 }

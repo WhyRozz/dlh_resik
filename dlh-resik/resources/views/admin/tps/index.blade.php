@@ -42,17 +42,17 @@
             </tr>
         </thead>
         <tbody id="tpsTableBody">
-<<<<<<< HEAD
+
             @forelse($tpsList as $tps)
             <tr data-id="{{ $tps->id_tps }}">  {{-- ✅ TAMBAHKAN data-id --}}
                     <td>{{ $tps->id_tps }}</td>
                     <td>{{ $tps->nama_tps }}</td>
-=======
+
             @forelse($tpsList as $index => $tps)
                 <tr>
                     <td class="no-urut">{{ $index + 1 }}</td>
                     <td class="nama-tps">{{ $tps->nama_tps }}</td>
->>>>>>> 69fa7ac280e706e1a10abf1c6dbcd066020ba775
+
                     <td>
                         @if($tps->lokasi && preg_match('/^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/', $tps->lokasi))
                             <a href="https://maps.google.com/maps?q={{ urlencode($tps->lokasi) }}"
